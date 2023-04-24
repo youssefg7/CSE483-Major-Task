@@ -120,3 +120,50 @@ for filename in os.listdir(input_dir):
 
 # Destroy all windows
 cv2.destroyAllWindows()
+
+
+#######################################################################################################
+########## Another trial: worked on non croped images "not best solution still errors occured"#########
+#######################################################################################################
+
+import cv2
+import os
+import numpy as np
+
+
+def localize_digits(image_dir):
+    for filename in os.listdir(image_dir):
+        if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg'):
+            # Load the image
+            image_path = os.path.join(image_dir, filename)
+            image = cv2.imread(image_path)
+
+            # Preprocess the image
+            image = cv2.resize(image, (400, 400))
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+            thresh = cv2.threshold(
+                blurred, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+
+            # Morphological operations
+            kernel = np.ones((5, 5), np.uint8)
+            opening = cv2.morphologyEx(
+                thresh, cv2.MORPH_OPEN, kernel, iterations=1)
+
+            # Contour detection
+            contours, hierarchy = cv2.findContours(
+                opening, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+            # Draw bounding boxes on the image
+            for cnt in contours:
+                x, y, w, h = cv2.boundingRect(cnt)
+                cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+            # Display the output image
+            cv2.imshow('Output Image', image)
+            cv2.waitKey(0)
+
+    cv2.destroyAllWindows()
+
+
+localize_digits('F:/Semester 8/Computer Vision/Project/filter')
