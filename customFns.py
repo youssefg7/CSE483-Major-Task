@@ -97,7 +97,7 @@ def iouPicTest(truth, predicted, threshold1=0.5, threshold2=0.5):
             if (x >= threshold1):
                 filtered.append([float(x), predicted[j]])
                 boxesTensors.append([predicted[j]['left'], predicted[j]['top'],predicted[j]['left']+predicted[j]['width'],predicted[j]['top']+predicted[j]['height']])
-    
+    print(np.array(filtered[0]).shape)
     scoresTensors = torch.tensor(filtered[:,0])
     boxesTensors = torch.tensor(boxesTensors)
     # Apply Non-maximum suppression to get 0/1 corresponding predicted box for every true box
